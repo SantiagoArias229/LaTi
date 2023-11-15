@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head> 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!--Fonts-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="static/css/base.css">
+
+
+</head>
+
+
+<body>
+    {% extends 'base.html' %}
+    {% block content %}
+    <section id="hero" class="d-flex align-items-center">
+        <div class="container text-center">
+            <h1>Bienvenido a Facturas</h1>
+            <p>Aqui podras encontrar y generar tus facturas de compra a proveedores</p>
+            <h2></h2>
+            {% if user.is_authenticated %}
+                <form action="">
+                    <div class="mb-3">
+                        <label for="busquedaproveedor" class="form-label">
+                            Busqueda por proveedor
+                        </label>
+                        <input type="text" class="form-control" name="busquedaproveedor" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                </form>
+                <form action="">
+                <div class="mb-3">
+                
+                <label class="form-label">Busca factura por fecha:</label>
+                <input type="date" name="searchFacturaC" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-primary">
+                Buscar
+            </button>
+            </form>
+                
+
+                <a href="{% url 'agregarFacturaC' user.id %}"class="btn_get_started">Agregar Factura Compra</a>
+                {% for facturaC in facturasC %}
+            <div v-for="facturaC in facturasC" class="col"> 
+                <div class="card-body"> 
+                    <p class="card-text">Id Factura: {{ facturaC.idFacturaC }} </p>
+                    <p class="card-text">Cantidad: {{ facturaC.cantProduct }}</p>
+                    <p class="card-text">Costo total: {{ facturaC.costo}}</p>
+                    <p class="card-text">Fecha compra: {{ facturaC.fecha}}</p> 
+                    <p class="card-text">Nombre proveedor: {{ facturaC.nombreProveedor }}</p> 
+                    <a class="btn btn-primary me-2" href="{% url 'actualizarFacturaC' user.id facturaC.idFacturaC %}">Actualizar</a>
+                    <a class="btn btn-danger" href="{% url 'eliminarFacturaC' user.id facturaC.idFacturaC %}">Eliminar</a> 
+
+                </div>
+            </div>
+                {% endfor %}
+            {% else %}
+                <a href="registro" class="btn_get_started">Iniciar</a>
+            {% endif %} 
+        </div>
+
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    {% endblock content%}
+</body>
+</html>

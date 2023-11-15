@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div style="display:flex; ; justify-content: space-evenly;" >
+<form action="">
+    <div class="mb-3">
+        <label class="form-label">Busca reporte gastos por dia:</label>
+        <input type="date" name="searchFacturaC" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">
+        Generar reporte por dia
+    </button>
+</form>
+<br>
+<br>
+<form action="">
+    <div class="mb-3">
+        <label class="form-label">Busca reporte gastos por Mes:</label>
+        <input type="month" name="searchFacturaC" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">
+        Generar reporte por mes
+    </button>
+</form>
+
+<form action="">
+    <div class="mb-3">
+        <label for="yearInput" class="form-label">Busca reporte gastos por año:</label>
+        <input type="number" name="searchFacturaC" class="form-control" id="yearInput" step="1" min="1900" max="2100" />
+    </div>
+    <button type="submit" class="btn btn-primary">
+        Generar reporte por año
+    </button>
+</form>
+</div>
+
+<br>
+<center><p><b>Searching for: {{ searchTerm }}</b></p></center>
+
+{% comment %} Primer comportamiento: Visualización de la tabla  {% endcomment %}
+<h1>Reporte de Gastos</h1>
+<div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Proveedor</th>
+                <th>Costo</th>
+                <th>ID factura gasto</th>
+                <th>Cantidad</th>
+
+            </tr>
+        </thead>
+        <tbody>
+        {% for facturaC in facturasC %}
+            <tr>
+                <td>{{ facturaC.fecha }}</td>
+                <td>{{ facturaC.nombreProveedor }}</td>
+                <td>{{ facturaC.costo }}</td>
+                <td>{{ facturaC.idFacturaC }}</td>
+                <td>{{ facturaC.cantProduct }}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td><b>TOTAL GASTOS</b></td>
+                <td></td>
+                <td><b>{{ totalCostos }}$ pesos</b></td>
+                <td></td>
+                <td><b>{{ totalCantProd }} productos </b></td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+
+    
+{% comment %} --Se le agrega un comportamiento a la tabla: visualizar grafica por factura con cambio de color----- {% endcomment %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div style="width: 280x; height:350px; display: flex; justify-content: center; align-items: center;">
+    <canvas id="graficaGastos"></canvas>
+    <canvas id="graficaGastos2"></canvas>
+</div>
+<button type="button" class="btn btn-danger" id="botonRojo">Cambio Color Rojo</button>
+<button type="button" class="btn btn-outline-secondary"  id="botonBlanco">Cambio Color Blanco</button>
+<script>
+    const ctx = document.getElementById('graficaGastos');
+    let colorsito="#FFFFFF";
+
+    const grafica=new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: {{labels|safe}},
+            datasets: [{
+                label: 'Precio',
+                data: {{data|safe}},
+                backgroundColor: colorsito,
+                borderColor:"#000000",
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+            x: {
+                display: true,
+                title: {
+                    display: true,
+                    text: 'Id factura'
+                }
+            },
+            y: {
+                display: true,
+                title: {
+                    display: true,
+                    text: 'Precio Factura'
+                }
+            }
+        },
+            plugins: {
+            title: {
+                display: true,
+                text: 'Grafica Gastos '
+            }
+        }
+        }
+    });
+    
+    document.getElementById('botonRojo').addEventListener('click', cambiarRojo);
+    document.getElementById('botonBlanco').addEventListener('click', cambiarBlanco);
+    
+    function cambiarRojo(){
+        colorsito="#FF0000";
+        
+        grafica.data.datasets[0].backgroundColor = colorsito;
+        grafica.update();
+    }
+
+    function cambiarBlanco(){
+        colorsito="#FFFFFF";
+        
+        grafica.data.datasets[0].backgroundColor = colorsito;
+        grafica.update();
+    }
+</script>
+
+
+{% comment %} Se le agrega otro comportamiento a la tabla: visualizar grafica de torta con total del precio de todas las facturas{% endcomment %}
+<script>
+    const ctx2 = document.getElementById('graficaGastos2');
+    new Chart(ctx2,{
+  type: 'polarArea',
+  data: {
+            labels: {{labels|safe}},
+            datasets: [{
+                label: 'Precio',
+                data: {{data|safe}},
+                
+                borderWidth: 1
+            }]
+        },
+  options: {scales: {
+            x: {
+                display: true,
+                title: {
+                    display: true,
+                    text: 'Id factura'
+                }
+            },
+            y: {
+                display: true,
+                title: {
+                    display: true,
+                    text: 'Precio Factura'
+                }
+            }
+        },
+        
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Grafica Gastos'
+      }
+    }
+  },
+});
+</script>
+{% comment %} ---------------------------------------------------------------------------- {% endcomment %}
+
+{% endblock content%}
